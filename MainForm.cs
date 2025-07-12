@@ -32,10 +32,53 @@ namespace SwitchSound
             this.WindowState = FormWindowState.Minimized;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            
+            // 设置窗体图标
+            try
+            {
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                using (var stream = assembly.GetManifestResourceStream("SwitchSound.Icon.ico"))
+                {
+                    if (stream != null)
+                    {
+                        this.Icon = new Icon(stream);
+                    }
+                    else
+                    {
+                        this.Icon = SystemIcons.Application;
+                    }
+                }
+            }
+            catch
+            {
+                // 如果加载图标失败，使用系统默认图标
+                this.Icon = SystemIcons.Application;
+            }
 
             // 创建系统托盘图标
             notifyIcon = new NotifyIcon();
-            notifyIcon.Icon = SystemIcons.Application;
+            
+            // 尝试加载自定义图标，如果失败则使用系统默认图标
+            try
+            {
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                using (var stream = assembly.GetManifestResourceStream("SwitchSound.Icon.ico"))
+                {
+                    if (stream != null)
+                    {
+                        notifyIcon.Icon = new Icon(stream);
+                    }
+                    else
+                    {
+                        notifyIcon.Icon = SystemIcons.Application;
+                    }
+                }
+            }
+            catch
+            {
+                notifyIcon.Icon = SystemIcons.Application;
+            }
+            
             notifyIcon.Text = "SwitchSound - 音频设备切换工具";
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
